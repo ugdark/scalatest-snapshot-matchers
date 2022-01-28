@@ -1,35 +1,36 @@
 package com.commodityvectors.snapshotmatchers
 
-import org.scalatest.{Matchers, fixture}
+import org.scalatest.FixtureTestSuite
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class DefaultSerializersSpec extends fixture.WordSpec with Matchers with SnapshotMatcher {
-  case class Test(value: Integer)
+class DefaultSerializersSpec extends AnyWordSpec with Matchers with SnapshotMatcher {
+  self: FixtureTestSuite =>
+
+  case class Test(value: Int)
 
   "DefaultSerializers" should {
-    "Serialize simple case classes" in { implicit test =>
-      SnapshotSerializer.serialize(Test(1)) shouldEqual "Test(1)"
-    }
 
-    "Serialize option" in { implicit test =>
+    "Serialize option" in {
       val element: Option[Test] = None
       SnapshotSerializer.serialize(Option(Test(1))) shouldEqual "Some(Test(1))"
       SnapshotSerializer.serialize(element) shouldEqual "None"
     }
 
-    "Serializer array" in { implicit test =>
+    "Serializer array" in {
       SnapshotSerializer.serialize(List(Test(1))) shouldEqual "List(Test(1))"
       SnapshotSerializer.serialize(Seq(Test(1))) shouldEqual "List(Test(1))"
       SnapshotSerializer.serialize(Vector(Test(1))) shouldEqual "Vector(Test(1))"
     }
 
-    "Serializer maps" in { implicit test =>
+    "Serializer maps" in {
       SnapshotSerializer.serialize(Map(Test(1) -> Test(2))) shouldEqual "Map(Test(1) -> Test(2))"
       SnapshotSerializer.serialize(Map("key" -> Test(2))) shouldEqual "Map(key -> Test(2))"
       SnapshotSerializer.serialize(Map(10 -> Test(2))) shouldEqual "Map(10 -> Test(2))"
       SnapshotSerializer.serialize(Map(10.0 -> Test(2))) shouldEqual "Map(10.0 -> Test(2))"
     }
 
-    "Serialize composed types" in { implicit test =>
+    "Serialize composed types" in {
       case class Complex(v1: Int,
                          v2: String,
                          v3: Double,
@@ -47,12 +48,11 @@ class DefaultSerializersSpec extends fixture.WordSpec with Matchers with Snapsho
             |)""".stripMargin
     }
 
-    "Allow custom serializers" in { implicit test =>
-      implicit lazy val customSerializer = new SnapshotSerializer[Test] {
-        override def serialize(in: Test): String = s"CustomSerializer: ${in.value}"
-      }
+    "Allow custom serializers" in {
+      implicit lazy val customSerializer: SnapshotSerializer[Test] = (in: Test) => s"CustomSerializer: ${in.value}"
 
       SnapshotSerializer.serialize(Test(1)) shouldEqual "CustomSerializer: 1"
     }
   }
+
 }

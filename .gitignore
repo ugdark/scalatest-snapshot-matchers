@@ -27,3 +27,4 @@ test-output/
 
 # Generated via microsite
 /docs/src/main/tut/index.md
+sbt.json

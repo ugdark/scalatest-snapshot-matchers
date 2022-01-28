@@ -1,9 +1,9 @@
 package com.commodityvectors.snapshotmatchers
 
 import java.io.File
-
 import org.apache.commons.io.FileUtils
-import org.scalatest.{BeforeAndAfterEach, Matchers, fixture}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.{BeforeAndAfterEach, fixture}
 
 import scala.util.Try
 
@@ -13,7 +13,7 @@ class SnapshotGenerationSpec extends fixture.WordSpec with Matchers with Snapsho
   val currentSpecPath: String = s"$snapshotFolder/com/commodityvectors/snapshotmatchers/SnapshotGenerationSpec"
 
   override def afterEach(): Unit = {
-    Try(FileUtils.deleteDirectory(new File(snapshotFolder)))
+//    Try(FileUtils.deleteDirectory(new File(snapshotFolder)))
   }
 
   "SnapshotMatcher" should {
